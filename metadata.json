@@ -1,0 +1,6 @@
+{
+  "name": "Wickely Bazar Vendor Survey",
+  "description": "Academic survey on vendors' opinions and selling strategies in Wickely Bazar.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

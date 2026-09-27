@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Study of Vendors' Opinions About Their Selling Strategies in Wickely Bazar</title>
+  <meta name="description" content="This survey is conducted for academic/research purposes to understand vendors' opinions, experiences, and selling strategies in Wickely Bazar. Please select the answer that best represents your experience. All questions are required.">
+  <meta property="og:title" content="A Study of Vendors' Opinions About Their Selling Strategies in Wickely Bazar">
+  <meta property="og:description" content="This survey is conducted for academic/research purposes to understand vendors' opinions, experiences, and selling strategies in Wickely Bazar.">
+  <meta property="og:type" content="website">
+
+  <!-- Google Fonts: Roboto (HTTPS) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Preload Cloudinary audio for zero startup delay -->
+  <link rel="preload" href="https://res.cloudinary.com/ntspltr3/video/upload/v1790527263/reelsaveapp_1790524332_trimmed.mp3" as="audio" type="audio/mpeg">
+  <link rel="preload" href="./voice.mp3" as="audio" type="audio/mpeg">
+
+  <!-- Relative stylesheet reference -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- Top decorative purple band -->
+  <div class="top-banner"></div>
+
+  <!-- Audio Blocked Fallback Alert -->
+  <div id="audioAlertBanner">
+    <span>AUDIO PLAYBACK BLOCKED BY BROWSER</span>
+    <button id="retryAudioBtn">PLAY AUDIO</button>
+  </div>
+
+  <!-- Pre-warmed persistent audio element loaded from beginning -->
+  <audio
+    id="voice"
+    src="https://res.cloudinary.com/ntspltr3/video/upload/v1790527263/reelsaveapp_1790524332_trimmed.mp3"
+    preload="auto"
+    loop
+    playsinline>
+    <source src="https://res.cloudinary.com/ntspltr3/video/upload/v1790527263/reelsaveapp_1790524332_trimmed.mp3" type="audio/mpeg">
+    <source src="./voice.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Glitch FX scanlines & tearing overlay -->
+  <div id="glitchFxOverlay">
+    <div class="crt-scanlines"></div>
+    <div class="glitch-tear-slice"></div>
+    <div class="glitch-tear-slice slice-2"></div>
+    <div class="glitch-tear-slice slice-3"></div>
+  </div>
+
+  <!-- =========================================================================
+       THE GOOGLE FORM SURVEY
+       ========================================================================= -->
+  <main id="surveyContainer">
+    <!-- Header Card -->
+    <header class="form-card header-card">
+      <div class="header-accent-bar"></div>
+      <div class="header-inner">
+        <h1 class="form-title" id="mainFormTitle">A Study of Vendors' Opinions About Their Selling Strategies in Wickely Bazar</h1>
+        <p class="form-description" id="mainFormDesc">
+          This survey is conducted for academic/research purposes to understand vendors' opinions, experiences, and selling strategies in Wickely Bazar. Please select the answer that best represents your experience. All questions are required.
+        </p>
+        <div class="header-meta-row">
+          <span class="required-notice"><span style="font-weight: bold; font-size: 14px;">*</span> Indicates required question</span>
+          <span class="survey-tag">Academic Fieldwork • 10 Questions</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Survey Form -->
+    <form id="surveyForm" novalidate>
+      <!-- Question 1 -->
+      <section class="form-card question-card" data-q="1">
+        <h2 class="question-text">
+          1. Aap Wickely Bazar mein kitne samay se vending/selling kar rahe hain?<span class="req-indicator">*</span>
+        </h2>
+        <div class="options-group">
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q1" value="6 mahine se kam" class="gforms-radio">
+              <span class="option-text">6 mahine se kam</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q1" value="6 mahine–1 saal" class="gforms-radio">
+              <span class="option-text">6 mahine–1 saal</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q1" value="1–3 saal" class="gforms-radio">
+              <span class="option-text">1–3 saal</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q1" value="3–5 saal" class="gforms-radio">
+              <span class="option-text">3–5 saal</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q1" value="5 saal se zyada" class="gforms-radio">
+              <span class="option-text">5 saal se zyada</span>
+            </label>
+          </div>
+        </div>
+        <div class="validation-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>This is a required question</span>
+        </div>
+      </section>
+
+      <!-- Question 2 -->
+      <section class="form-card question-card" data-q="2">
+        <h2 class="question-text">
+          2. Aapki dukaan/stall par sabse zyada bikne wale products kaun se hain?<span class="req-indicator">*</span>
+        </h2>
+        <div class="options-group">
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q2" value="Food & beverages" class="gforms-radio">
+              <span class="option-text">Food & beverages</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q2" value="Clothing" class="gforms-radio">
+              <span class="option-text">Clothing</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q2" value="Household items" class="gforms-radio">
+              <span class="option-text">Household items</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q2" value="Accessories" class="gforms-radio">
+              <span class="option-text">Accessories</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q2" value="Other" class="gforms-radio">
+              <span class="option-text">Other</span>
+            </label>
+            <input type="text" id="other_text_q2" class="other-text-input" placeholder="Your answer">
+          </div>
+        </div>
+        <div class="validation-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>This is a required question</span>
+        </div>
+      </section>
+
+      <!-- Question 3 -->
+      <section class="form-card question-card" data-q="3">
+        <h2 class="question-text">
+          3. Aap apne products ki selling price kaise decide karte hain?<span class="req-indicator">*</span>
+        </h2>
+        <div class="options-group">
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q3" value="Competitors ke price dekhkar" class="gforms-radio">
+              <span class="option-text">Competitors ke price dekhkar</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q3" value="Cost + profit margin" class="gforms-radio">
+              <span class="option-text">Cost + profit margin</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q3" value="Customer demand ke according" class="gforms-radio">
+              <span class="option-text">Customer demand ke according</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q3" value="Supplier price ke according" class="gforms-radio">
+              <span class="option-text">Supplier price ke according</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q3" value="Combination of these" class="gforms-radio">
+              <span class="option-text">Combination of these</span>
+            </label>
+          </div>
+        </div>
+        <div class="validation-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>This is a required question</span>
+        </div>
+      </section>
+
+      <!-- Question 4 -->
+      <section class="form-card question-card" data-q="4">
+        <h2 class="question-text">
+          4. Customers ko attract karne ke liye aap kaunsi strategy sabse zyada use karte hain?<span class="req-indicator">*</span>
+        </h2>
+        <div class="options-group">
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q4" value="Discount/offer" class="gforms-radio">
+              <span class="option-text">Discount/offer</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q4" value="Product display" class="gforms-radio">
+              <span class="option-text">Product display</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q4" value="Verbal promotion" class="gforms-radio">
+              <span class="option-text">Verbal promotion</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q4" value="Repeat-customer relationship" class="gforms-radio">
+              <span class="option-text">Repeat-customer relationship</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q4" value="Social media/online promotion" class="gforms-radio">
+              <span class="option-text">Social media/online promotion</span>
+            </label>
+          </div>
+        </div>
+        <div class="validation-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>This is a required question</span>
+        </div>
+      </section>
+
+      <!-- Question 5 -->
+      <section class="form-card question-card" data-q="5">
+        <h2 class="question-text">
+          5. Kya aap seasonal demand ke according apni product range change karte hain?<span class="req-indicator">*</span>
+        </h2>
+        <div class="options-group">
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q5" value="Hamesha" class="gforms-radio">
+              <span class="option-text">Hamesha</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q5" value="Kabhi-kabhi" class="gforms-radio">
+              <span class="option-text">Kabhi-kabhi</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q5" value="Rarely" class="gforms-radio">
+              <span class="option-text">Rarely</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q5" value="Bilkul nahi" class="gforms-radio">
+              <span class="option-text">Bilkul nahi</span>
+            </label>
+          </div>
+        </div>
+        <div class="validation-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>This is a required question</span>
+        </div>
+      </section>
+
+      <!-- Question 6 -->
+      <section class="form-card question-card" data-q="6">
+        <h2 class="question-text">
+          6. Aap customers ko repeat purchase ke liye kaise encourage karte hain?<span class="req-indicator">*</span>
+        </h2>
+        <div class="options-group">
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q6" value="Discount" class="gforms-radio">
+              <span class="option-text">Discount</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q6" value="Better service" class="gforms-radio">
+              <span class="option-text">Better service</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q6" value="Credit/relationship" class="gforms-radio">
+              <span class="option-text">Credit/relationship</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q6" value="New products" class="gforms-radio">
+              <span class="option-text">New products</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q6" value="Koi specific strategy nahi" class="gforms-radio">
+              <span class="option-text">Koi specific strategy nahi</span>
+            </label>
+          </div>
+        </div>
+        <div class="validation-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>This is a required question</span>
+        </div>
+      </section>
+
+      <!-- Question 7 -->
+      <section class="form-card question-card" data-q="7">
+        <h2 class="question-text">
+          7. Aapko apne competitors ki selling strategies ka kitna effect padta hai?<span class="req-indicator">*</span>
+        </h2>
+        <div class="options-group">
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q7" value="Bahut zyada" class="gforms-radio">
+              <span class="option-text">Bahut zyada</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q7" value="Kaafi" class="gforms-radio">
+              <span class="option-text">Kaafi</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q7" value="Moderate" class="gforms-radio">
+              <span class="option-text">Moderate</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q7" value="Bahut kam" class="gforms-radio">
+              <span class="option-text">Bahut kam</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q7" value="Bilkul nahi" class="gforms-radio">
+              <span class="option-text">Bilkul nahi</span>
+            </label>
+          </div>
+        </div>
+        <div class="validation-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>This is a required question</span>
+        </div>
+      </section>
+
+      <!-- Question 8 -->
+      <section class="form-card question-card" data-q="8">
+        <h2 class="question-text">
+          8. Kya aap social media, WhatsApp ya online platforms ka use selling badhane ke liye karte hain?<span class="req-indicator">*</span>
+        </h2>
+        <div class="options-group">
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q8" value="Regularly" class="gforms-radio">
+              <span class="option-text">Regularly</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q8" value="Sometimes" class="gforms-radio">
+              <span class="option-text">Sometimes</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q8" value="Rarely" class="gforms-radio">
+              <span class="option-text">Rarely</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q8" value="Never" class="gforms-radio">
+              <span class="option-text">Never</span>
+            </label>
+          </div>
+        </div>
+        <div class="validation-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>This is a required question</span>
+        </div>
+      </section>
+
+      <!-- Question 9 -->
+      <section class="form-card question-card" data-q="9">
+        <h2 class="question-text">
+          9. Aapke hisaab se Wickely Bazar mein sales badhane ki sabse badi challenge kya hai?<span class="req-indicator">*</span>
+        </h2>
+        <div class="options-group">
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q9" value="High competition" class="gforms-radio">
+              <span class="option-text">High competition</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q9" value="Customer footfall" class="gforms-radio">
+              <span class="option-text">Customer footfall</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q9" value="Price competition" class="gforms-radio">
+              <span class="option-text">Price competition</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q9" value="Limited space" class="gforms-radio">
+              <span class="option-text">Limited space</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q9" value="Changing customer preferences" class="gforms-radio">
+              <span class="option-text">Changing customer preferences</span>
+            </label>
+          </div>
+        </div>
+        <div class="validation-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>This is a required question</span>
+        </div>
+      </section>
+
+      <!-- Question 10 -->
+      <section class="form-card question-card" data-q="10">
+        <h2 class="question-text">
+          10. Aapke hisaab se sales improve karne ke liye kaunsi strategy sabse useful hogi?<span class="req-indicator">*</span>
+        </h2>
+        <div class="options-group">
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q10" value="Better product display" class="gforms-radio">
+              <span class="option-text">Better product display</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q10" value="More discounts/offers" class="gforms-radio">
+              <span class="option-text">More discounts/offers</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q10" value="Online promotion" class="gforms-radio">
+              <span class="option-text">Online promotion</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q10" value="Product variety" class="gforms-radio">
+              <span class="option-text">Product variety</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q10" value="Customer service" class="gforms-radio">
+              <span class="option-text">Customer service</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <label class="option-label">
+              <input type="radio" name="q10" value="Other" class="gforms-radio">
+              <span class="option-text">Other</span>
+            </label>
+            <input type="text" id="other_text_q10" class="other-text-input" placeholder="Your answer">
+          </div>
+        </div>
+        <div class="validation-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>This is a required question</span>
+        </div>
+      </section>
+
+      <!-- Bottom Actions -->
+      <div class="form-actions">
+        <div class="actions-left">
+          <button type="submit" id="submitBtn" class="btn-submit">Submit</button>
+          <button type="button" id="clearBtn" class="btn-clear">Clear form</button>
+        </div>
+        <span id="unansweredCount" class="unanswered-counter"></span>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <footer>
+      <p>Never submit passwords through online forms.</p>
+      <p style="font-size: 11px; margin-top: 4px;">Academic Research Study • Wickely Bazar Selling Strategies</p>
+    </footer>
+  </main>
+
+  <!-- Relative script reference -->
+  <script src="./script.js"></script>
+</body>
+</html>

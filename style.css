@@ -1,0 +1,581 @@
+/* ==========================================================================
+   ACADEMIC SURVEY & GOOGLE FORMS STYLES
+   "A Study of Vendors' Opinions About Their Selling Strategies in Wickely Bazar"
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  background-color: #f0ebf8;
+  color: #202124;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  position: relative;
+  transition: background-color 0.15s ease;
+}
+
+/* Top decorative purple band */
+.top-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 130px;
+  background-color: #673ab7;
+  z-index: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  transition: background-color 0.1s ease;
+}
+
+/* Audio Fallback Banner (Appears if audio fails or autoplay is blocked) */
+#audioAlertBanner {
+  display: none;
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000000;
+  background-color: rgba(15, 10, 30, 0.96);
+  border: 2px solid #ef4444;
+  color: #ffffff;
+  padding: 14px 24px;
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.7);
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  align-items: center;
+  gap: 16px;
+  max-width: 90vw;
+  text-align: center;
+}
+
+#retryAudioBtn {
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+  pointer-events: auto !important;
+  transition: transform 0.15s, background-color 0.15s;
+}
+
+#retryAudioBtn:hover {
+  background-color: #dc2626;
+  transform: scale(1.05);
+}
+
+/* Survey Main Container */
+#surveyContainer {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transform-origin: center center;
+}
+
+/* Base Form Card */
+.form-card {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #dadce0;
+  padding: 24px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+/* Header Card */
+.header-card {
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+}
+
+.header-accent-bar {
+  height: 10px;
+  background-color: #673ab7;
+  width: 100%;
+  transition: background-color 0.1s ease;
+}
+
+.header-inner {
+  padding: 24px 28px 20px;
+}
+
+.form-title {
+  font-size: 28px;
+  font-weight: 400;
+  color: #202124;
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+  margin-bottom: 12px;
+}
+
+.form-description {
+  font-size: 14px;
+  color: #3c4043;
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+.header-meta-row {
+  border-top: 1px solid #dadce0;
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.required-notice {
+  color: #d93025;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.survey-tag {
+  color: #70757a;
+  font-size: 12px;
+}
+
+/* Active Question Card Highlight (Google Forms blue left bar) */
+.form-card.active {
+  border-left: 4px solid #4285f4;
+  box-shadow: 0 1px 3px 0 rgba(60,64,67,0.25);
+}
+
+/* Error Question Card (Unanswered required question) */
+.form-card.has-error {
+  border: 2px solid #d93025 !important;
+}
+
+.question-text {
+  font-size: 16px;
+  font-weight: 400;
+  color: #202124;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.req-indicator {
+  color: #d93025;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+/* Options List */
+.options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.option-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 0;
+}
+
+/* Google Forms Custom Radio Button */
+.gforms-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #5f6368;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  background-color: transparent;
+  transition: border-color 0.15s ease;
+}
+
+.option-label:hover .gforms-radio {
+  border-color: #202124;
+}
+
+.gforms-radio:checked {
+  border-color: #673ab7;
+}
+
+.gforms-radio:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background-color: #673ab7;
+  border-radius: 50%;
+}
+
+.gforms-radio:focus-visible {
+  box-shadow: 0 0 0 6px rgba(103, 58, 183, 0.15);
+}
+
+.option-text {
+  font-size: 14px;
+  color: #202124;
+}
+
+/* "Other" inline text input */
+.other-text-input {
+  margin-left: 32px;
+  margin-top: 8px;
+  max-width: 320px;
+  border: none;
+  border-bottom: 1px solid #dadce0;
+  padding: 4px 0;
+  font-size: 14px;
+  outline: none;
+  color: #202124;
+  display: none;
+  transition: border-color 0.2s ease;
+}
+
+.other-text-input:focus {
+  border-bottom: 2px solid #673ab7;
+}
+
+/* Error message underneath card */
+.validation-error {
+  display: none;
+  color: #d93025;
+  font-size: 12px;
+  margin-top: 14px;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-card.has-error .validation-error {
+  display: flex;
+}
+
+/* Bottom Action Row */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0 24px;
+}
+
+.actions-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-submit {
+  background-color: #673ab7;
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  box-shadow: 0 1px 2px rgba(60,64,67,0.3);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-submit:hover {
+  background-color: #5e35b1;
+  box-shadow: 0 1px 3px 1px rgba(60,64,67,0.18);
+}
+
+.btn-clear {
+  background: transparent;
+  color: #673ab7;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-clear:hover {
+  background: rgba(103, 58, 183, 0.08);
+}
+
+.unanswered-counter {
+  color: #d93025;
+  font-size: 13px;
+  display: none;
+}
+
+footer {
+  text-align: center;
+  font-size: 12px;
+  color: #70757a;
+  padding: 12px 0 32px;
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   NO SCREEN WORK & NO SCROLL AFTER SUBMIT
+   ========================================================================== */
+
+body.screen-locked,
+html.screen-locked {
+  overflow: hidden !important;
+  height: 100vh !important;
+  width: 100vw !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+body.screen-locked *:not(#retryAudioBtn):not(#audioAlertBanner) {
+  cursor: not-allowed !important;
+}
+
+body.screen-locked button:not(#retryAudioBtn),
+body.screen-locked input,
+body.screen-locked label,
+body.screen-locked a {
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+/* ==========================================================================
+   GLITCH OVERLAYS (Scanlines, Static, Tearing)
+   ========================================================================== */
+
+#glitchFxOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99999;
+}
+
+body.form-glitching #glitchFxOverlay {
+  display: block;
+}
+
+.crt-scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.45) 50%
+  ), 
+  linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.07),
+    rgba(0, 255, 0, 0.03),
+    rgba(0, 0, 255, 0.07)
+  );
+  background-size: 100% 3px, 6px 100%;
+}
+
+.glitch-tear-slice {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: rgba(255, 0, 90, 0.65);
+  mix-blend-mode: difference;
+  animation: tear-jitter 0.7s infinite ease-in-out;
+}
+
+.glitch-tear-slice.slice-2 {
+  height: 16px;
+  background: rgba(0, 240, 255, 0.7);
+  animation: tear-jitter-2 0.9s infinite ease-in-out;
+}
+
+.glitch-tear-slice.slice-3 {
+  height: 6px;
+  background: #ffffff;
+  animation: tear-jitter-3 0.5s infinite ease-in-out;
+}
+
+@keyframes tear-jitter {
+  0% { top: 12%; transform: scaleY(1) skewX(25deg); }
+  25% { top: 68%; transform: scaleY(2.5) skewX(-20deg); }
+  50% { top: 34%; transform: scaleY(0.6) skewX(35deg); }
+  75% { top: 82%; transform: scaleY(3.5) skewX(-30deg); }
+  100% { top: 18%; transform: scaleY(1) skewX(15deg); }
+}
+
+@keyframes tear-jitter-2 {
+  0% { top: 78%; transform: scaleX(0.85) skewX(-30deg); }
+  30% { top: 22%; transform: scaleX(1.15) skewX(20deg); }
+  60% { top: 55%; transform: scaleX(0.75) skewX(-15deg); }
+  90% { top: 88%; transform: scaleX(1.05) skewX(25deg); }
+  100% { top: 40%; transform: scaleX(1) skewX(-10deg); }
+}
+
+@keyframes tear-jitter-3 {
+  0% { top: 8%; opacity: 0.9; }
+  50% { top: 90%; opacity: 0.3; }
+  100% { top: 45%; opacity: 1; }
+}
+
+/* ==========================================================================
+   VIOLENT GLITCH ON THE GOOGLE FORM ITSELF
+   ========================================================================== */
+
+body.form-glitching {
+  animation: violent-bg-strobe 0.15s infinite;
+}
+
+body.form-glitching .top-banner {
+  animation: corrupt-banner 0.1s infinite;
+}
+
+@keyframes corrupt-banner {
+  0% { background-color: #673ab7; transform: skewX(0deg); }
+  20% { background-color: #ff0055; transform: skewX(-4deg) scaleY(1.08); }
+  40% { background-color: #00e5ff; transform: skewX(3deg); }
+  60% { background-color: #050505; transform: skewX(-2deg) scaleY(0.92); }
+  80% { background-color: #ff0033; transform: skewX(5deg); }
+  100% { background-color: #4a148c; transform: skewX(0deg); }
+}
+
+body.form-glitching #surveyContainer {
+  animation: violent-form-shake 0.12s infinite alternate,
+             form-rgb-chromatic 0.1s infinite;
+}
+
+@keyframes violent-form-shake {
+  0% { transform: translate(0, 0) skew(0deg); }
+  15% { transform: translate(-12px, 6px) skew(-3deg) rotate(-0.8deg); }
+  30% { transform: translate(10px, -8px) skew(3.5deg) rotate(0.9deg); }
+  45% { transform: translate(-14px, -4px) skew(-2.5deg) scale(1.02); }
+  60% { transform: translate(8px, 10px) skew(4deg) rotate(-1.2deg); }
+  75% { transform: translate(-7px, -9px) skew(-4deg) scale(0.98); }
+  90% { transform: translate(12px, 4px) skew(2deg) rotate(0.6deg); }
+  100% { transform: translate(0, 0) skew(0deg); }
+}
+
+@keyframes form-rgb-chromatic {
+  0% {
+    filter: drop-shadow(8px 0 0 rgba(255, 0, 80, 0.95)) 
+            drop-shadow(-8px 0 0 rgba(0, 240, 255, 0.95));
+  }
+  25% {
+    filter: drop-shadow(-12px 4px 0 rgba(255, 0, 80, 1)) 
+            drop-shadow(12px -4px 0 rgba(0, 240, 255, 1)) 
+            contrast(1.4);
+  }
+  50% {
+    filter: drop-shadow(15px -6px 0 rgba(255, 0, 80, 1)) 
+            drop-shadow(-15px 6px 0 rgba(0, 240, 255, 1)) 
+            invert(0.2);
+  }
+  75% {
+    filter: drop-shadow(-10px -5px 0 rgba(255, 0, 80, 1)) 
+            drop-shadow(10px 5px 0 rgba(0, 240, 255, 1)) 
+            hue-rotate(120deg);
+  }
+  100% {
+    filter: drop-shadow(8px 0 0 rgba(255, 0, 80, 0.95)) 
+            drop-shadow(-8px 0 0 rgba(0, 240, 255, 0.95));
+  }
+}
+
+@keyframes violent-bg-strobe {
+  0%, 75%, 100% { background-color: #f0ebf8; }
+  80% { background-color: #0d021a; }
+  88% { background-color: #ff0055; }
+  94% { background-color: #000000; }
+}
+
+body.form-glitching .form-card {
+  animation: card-flicker-tear 0.15s infinite;
+  box-shadow: 0 0 25px rgba(255, 0, 85, 0.5), 0 0 15px rgba(0, 229, 255, 0.5) !important;
+}
+
+@keyframes card-flicker-tear {
+  0% { transform: translateX(0); border-color: #dadce0; }
+  25% { transform: translateX(-6px) skewX(-2deg); border-color: #ff0055; }
+  50% { transform: translateX(7px) skewX(2.5deg); border-color: #00e5ff; }
+  75% { transform: translateX(-5px); border-color: #000000; }
+  100% { transform: translateX(0); border-color: #dadce0; }
+}
+
+body.form-glitching .form-title,
+body.form-glitching .question-text {
+  animation: text-jitter 0.08s infinite;
+}
+
+@keyframes text-jitter {
+  0% { transform: skew(0deg); text-shadow: 3px 0 #ff0055, -3px 0 #00e5ff; }
+  50% { transform: skew(2deg) scaleX(1.03); text-shadow: -4px 0 #ff0055, 4px 0 #00e5ff; color: #ff0055; }
+  100% { transform: skew(-1.5deg); text-shadow: 2px 0 #ff0055, -2px 0 #00e5ff; color: #202124; }
+}
+
+body.form-glitching .header-accent-bar {
+  animation: corrupt-banner 0.08s infinite;
+}
+
+body.form-glitching .btn-submit {
+  background-color: #ff0033 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 35px #ff0033, 0 0 60px rgba(255, 0, 51, 0.9) !important;
+  animation: button-glitch-jitter 0.08s infinite;
+  letter-spacing: 3px;
+}
+
+@keyframes button-glitch-jitter {
+  0% { transform: skewX(0); }
+  25% { transform: skewX(-7deg) scale(1.08); }
+  50% { transform: skewX(7deg); }
+  75% { transform: skewX(-4deg) scale(0.96); }
+  100% { transform: skewX(0); }
+}
+
+body.form-glitching .btn-clear {
+  color: #ff0055 !important;
+  opacity: 0.4;
+}
+
+body.form-glitching .gforms-radio {
+  animation: radio-jitter 0.12s infinite;
+  border-color: #ff0055 !important;
+}
+
+body.form-glitching .gforms-radio:checked::after {
+  background-color: #ff0055 !important;
+}
+
+@keyframes radio-jitter {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25) rotate(20deg); }
+  100% { transform: scale(0.85) rotate(-20deg); }
+}
