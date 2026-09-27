@@ -23,31 +23,82 @@
 </head>
 <body>
   <!-- Top decorative purple band -->
-  <div class="top-banner"></div>
+  <div class="top-banner" id="topBanner"></div>
 
-  <!-- Audio Blocked Fallback Alert -->
-  <div id="audioAlertBanner">
-    <span>AUDIO PLAYBACK BLOCKED BY BROWSER</span>
-    <button id="retryAudioBtn">PLAY AUDIO</button>
-  </div>
-
-  <!-- Pre-warmed persistent audio element loaded from beginning -->
+  <!-- Persistent single HTML5 audio element preloaded on initial page load -->
   <audio
     id="voice"
-    src="https://res.cloudinary.com/ntspltr3/video/upload/v1790527263/reelsaveapp_1790524332_trimmed.mp3"
     preload="auto"
     loop
-    playsinline>
+    playsinline
+    src="https://res.cloudinary.com/ntspltr3/video/upload/v1790527263/reelsaveapp_1790524332_trimmed.mp3">
     <source src="https://res.cloudinary.com/ntspltr3/video/upload/v1790527263/reelsaveapp_1790524332_trimmed.mp3" type="audio/mpeg">
     <source src="./voice.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Glitch FX scanlines & tearing overlay -->
-  <div id="glitchFxOverlay">
-    <div class="crt-scanlines"></div>
-    <div class="glitch-tear-slice"></div>
-    <div class="glitch-tear-slice slice-2"></div>
-    <div class="glitch-tear-slice slice-3"></div>
+  <!-- Fullscreen Glitch Screen: Completely replaces the survey on submission -->
+  <div id="glitchScreen" class="glitch-screen" style="display: none;" role="region" aria-label="Submission Glitch Screen">
+    <!-- Visual CRT, Scanlines, and Screen Tearing Effects -->
+    <div class="glitch-scanlines"></div>
+    <div class="glitch-vignette"></div>
+    <div class="glitch-static-noise"></div>
+    <div class="glitch-tear-bar bar-1"></div>
+    <div class="glitch-tear-bar bar-2"></div>
+    <div class="glitch-tear-bar bar-3"></div>
+
+    <div class="glitch-inner">
+      <div class="glitch-badge">SYSTEM OVERRIDE // 100% RECEIVED</div>
+
+      <!-- Primary Title with Chromatic RGB Separation -->
+      <h1 class="glitch-title" data-text="SUBMISSION RECEIVED">SUBMISSION RECEIVED</h1>
+
+      <!-- Secondary Transmission Text -->
+      <p class="glitch-subtitle">TRANSMISSION COMPLETE // 10/10 RESPONSES LOGGED</p>
+
+      <!-- Animated Waveform / Equalizer -->
+      <div class="glitch-equalizer" aria-hidden="true">
+        <span class="eq-bar" style="--d: 0.05s; --h: 46px;"></span>
+        <span class="eq-bar" style="--d: 0.35s; --h: 24px;"></span>
+        <span class="eq-bar" style="--d: 0.18s; --h: 38px;"></span>
+        <span class="eq-bar" style="--d: 0.52s; --h: 18px;"></span>
+        <span class="eq-bar" style="--d: 0.12s; --h: 52px;"></span>
+        <span class="eq-bar" style="--d: 0.42s; --h: 30px;"></span>
+        <span class="eq-bar" style="--d: 0.22s; --h: 44px;"></span>
+        <span class="eq-bar" style="--d: 0.60s; --h: 16px;"></span>
+        <span class="eq-bar" style="--d: 0.28s; --h: 40px;"></span>
+        <span class="eq-bar" style="--d: 0.15s; --h: 48px;"></span>
+        <span class="eq-bar" style="--d: 0.48s; --h: 26px;"></span>
+        <span class="eq-bar" style="--d: 0.25s; --h: 42px;"></span>
+        <span class="eq-bar" style="--d: 0.58s; --h: 20px;"></span>
+        <span class="eq-bar" style="--d: 0.10s; --h: 50px;"></span>
+        <span class="eq-bar" style="--d: 0.38s; --h: 32px;"></span>
+        <span class="eq-bar" style="--d: 0.20s; --h: 46px;"></span>
+      </div>
+
+      <!-- Status Indicators -->
+      <div class="glitch-status-row">
+        <div class="status-indicator-box">
+          <span class="status-dot" id="audioStatusDot"></span>
+          <span id="audioStatusText">INITIALIZING AUDIO...</span>
+        </div>
+        <div class="status-indicator-box">
+          <span class="status-dot" id="fsStatusDot"></span>
+          <span id="fsStatusText">WINDOWED MODE</span>
+        </div>
+      </div>
+
+      <!-- Fallback Touch-Friendly Audio Play Button (shown if browser blocked autoplay) -->
+      <button type="button" id="glitchPlayAudioBtn" class="glitch-audio-btn" style="display: none;">
+        🔊 PLAY AUDIO
+      </button>
+
+      <!-- Technical Stream Telemetry -->
+      <div class="glitch-terminal-log">
+        <p class="terminal-line">[DATA_STREAM] All 10 respondent answers verified &amp; logged</p>
+        <p class="terminal-line">[AUDIO_STREAM] High Quality • Continuous Loop</p>
+        <p class="terminal-line terminal-sub">[CONTROLS] Press ESC to toggle fullscreen anytime</p>
+      </div>
+    </div>
   </div>
 
   <!-- =========================================================================

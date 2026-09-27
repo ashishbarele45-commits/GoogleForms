@@ -344,238 +344,355 @@ footer {
 }
 
 /* ==========================================================================
-   NO SCREEN WORK & NO SCROLL AFTER SUBMIT
+   GLITCH SCREEN (FULL VIEWPORT COVERAGE)
+   "After Submit, completely hide the survey."
+   "The glitch screen should cover the entire viewport."
    ========================================================================== */
 
-body.screen-locked,
-html.screen-locked {
-  overflow: hidden !important;
-  height: 100vh !important;
-  width: 100vw !important;
-  touch-action: none !important;
-  overscroll-behavior: none !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
-}
-
-body.screen-locked *:not(#retryAudioBtn):not(#audioAlertBanner) {
-  cursor: not-allowed !important;
-}
-
-body.screen-locked button:not(#retryAudioBtn),
-body.screen-locked input,
-body.screen-locked label,
-body.screen-locked a {
-  pointer-events: none !important;
-  cursor: not-allowed !important;
-}
-
-/* ==========================================================================
-   GLITCH OVERLAYS (Scanlines, Static, Tearing)
-   ========================================================================== */
-
-#glitchFxOverlay {
-  display: none;
+.glitch-screen {
   position: fixed;
   inset: 0;
-  pointer-events: none;
-  z-index: 99999;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: #030108;
+  color: #00ffcc;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 16px;
+  animation: glitch-bg-flicker 0.15s infinite;
 }
 
-body.form-glitching #glitchFxOverlay {
-  display: block;
-}
-
-.crt-scanlines {
+/* CRT Vignette / Radial Shadow */
+.glitch-vignette {
   position: absolute;
   inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.85) 90%);
+  z-index: 2;
+}
+
+/* CRT Scanlines */
+.glitch-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   background: linear-gradient(
     rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.45) 50%
+    rgba(0, 0, 0, 0.65) 50%
   ), 
   linear-gradient(
     90deg,
-    rgba(255, 0, 0, 0.07),
+    rgba(255, 0, 0, 0.08),
     rgba(0, 255, 0, 0.03),
-    rgba(0, 0, 255, 0.07)
+    rgba(0, 0, 255, 0.08)
   );
-  background-size: 100% 3px, 6px 100%;
+  background-size: 100% 4px, 6px 100%;
+  z-index: 3;
+  opacity: 0.9;
 }
 
-.glitch-tear-slice {
+/* Digital Noise / Interference */
+.glitch-static-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-radial-gradient(#000 0 0.0001%, #fff 0 0.0002%);
+  background-size: 200px 200px;
+  opacity: 0.04;
+  animation: noise-shift 0.2s steps(4) infinite;
+  z-index: 4;
+}
+
+/* Screen Tearing Horizontal Bars */
+.glitch-tear-bar {
   position: absolute;
   left: 0;
   right: 0;
-  height: 10px;
-  background: rgba(255, 0, 90, 0.65);
-  mix-blend-mode: difference;
-  animation: tear-jitter 0.7s infinite ease-in-out;
+  height: 12px;
+  background: rgba(255, 0, 85, 0.7);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 5;
+  animation: tear-shift-1 0.7s infinite linear;
 }
 
-.glitch-tear-slice.slice-2 {
-  height: 16px;
-  background: rgba(0, 240, 255, 0.7);
-  animation: tear-jitter-2 0.9s infinite ease-in-out;
+.glitch-tear-bar.bar-2 {
+  height: 18px;
+  background: rgba(0, 240, 255, 0.65);
+  animation: tear-shift-2 0.9s infinite linear;
 }
 
-.glitch-tear-slice.slice-3 {
+.glitch-tear-bar.bar-3 {
   height: 6px;
-  background: #ffffff;
-  animation: tear-jitter-3 0.5s infinite ease-in-out;
+  background: rgba(255, 255, 255, 0.8);
+  animation: tear-shift-3 0.45s infinite linear;
 }
 
-@keyframes tear-jitter {
-  0% { top: 12%; transform: scaleY(1) skewX(25deg); }
-  25% { top: 68%; transform: scaleY(2.5) skewX(-20deg); }
-  50% { top: 34%; transform: scaleY(0.6) skewX(35deg); }
-  75% { top: 82%; transform: scaleY(3.5) skewX(-30deg); }
-  100% { top: 18%; transform: scaleY(1) skewX(15deg); }
+@keyframes tear-shift-1 {
+  0% { top: 15%; transform: scaleY(1) skewX(20deg); }
+  25% { top: 72%; transform: scaleY(2.2) skewX(-15deg); }
+  50% { top: 38%; transform: scaleY(0.7) skewX(25deg); }
+  75% { top: 85%; transform: scaleY(3) skewX(-20deg); }
+  100% { top: 15%; transform: scaleY(1) skewX(20deg); }
 }
 
-@keyframes tear-jitter-2 {
-  0% { top: 78%; transform: scaleX(0.85) skewX(-30deg); }
-  30% { top: 22%; transform: scaleX(1.15) skewX(20deg); }
-  60% { top: 55%; transform: scaleX(0.75) skewX(-15deg); }
-  90% { top: 88%; transform: scaleX(1.05) skewX(25deg); }
-  100% { top: 40%; transform: scaleX(1) skewX(-10deg); }
+@keyframes tear-shift-2 {
+  0% { top: 80%; transform: scaleX(0.9) skewX(-25deg); }
+  35% { top: 25%; transform: scaleX(1.1) skewX(15deg); }
+  70% { top: 60%; transform: scaleX(0.8) skewX(-10deg); }
+  100% { top: 80%; transform: scaleX(0.9) skewX(-25deg); }
 }
 
-@keyframes tear-jitter-3 {
-  0% { top: 8%; opacity: 0.9; }
-  50% { top: 90%; opacity: 0.3; }
-  100% { top: 45%; opacity: 1; }
+@keyframes tear-shift-3 {
+  0% { top: 10%; opacity: 0.9; }
+  50% { top: 92%; opacity: 0.3; }
+  100% { top: 40%; opacity: 1; }
 }
 
-/* ==========================================================================
-   VIOLENT GLITCH ON THE GOOGLE FORM ITSELF
-   ========================================================================== */
-
-body.form-glitching {
-  animation: violent-bg-strobe 0.15s infinite;
+@keyframes glitch-bg-flicker {
+  0%, 100% { background-color: #030108; }
+  50% { background-color: #0b0217; }
+  92% { background-color: #120324; }
 }
 
-body.form-glitching .top-banner {
-  animation: corrupt-banner 0.1s infinite;
+@keyframes noise-shift {
+  0% { background-position: 0 0; }
+  50% { background-position: 50px 30px; }
+  100% { background-position: -40px 60px; }
 }
 
-@keyframes corrupt-banner {
-  0% { background-color: #673ab7; transform: skewX(0deg); }
-  20% { background-color: #ff0055; transform: skewX(-4deg) scaleY(1.08); }
-  40% { background-color: #00e5ff; transform: skewX(3deg); }
-  60% { background-color: #050505; transform: skewX(-2deg) scaleY(0.92); }
-  80% { background-color: #ff0033; transform: skewX(5deg); }
-  100% { background-color: #4a148c; transform: skewX(0deg); }
+/* Inner Centered Content */
+.glitch-inner {
+  position: relative;
+  z-index: 10;
+  max-width: 680px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
 }
 
-body.form-glitching #surveyContainer {
-  animation: violent-form-shake 0.12s infinite alternate,
-             form-rgb-chromatic 0.1s infinite;
+.glitch-badge {
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-size: clamp(10px, 2.5vw, 13px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #00ffcc;
+  background: rgba(0, 255, 204, 0.12);
+  border: 1px solid rgba(0, 255, 204, 0.4);
+  padding: 6px 14px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
 }
 
-@keyframes violent-form-shake {
-  0% { transform: translate(0, 0) skew(0deg); }
-  15% { transform: translate(-12px, 6px) skew(-3deg) rotate(-0.8deg); }
-  30% { transform: translate(10px, -8px) skew(3.5deg) rotate(0.9deg); }
-  45% { transform: translate(-14px, -4px) skew(-2.5deg) scale(1.02); }
-  60% { transform: translate(8px, 10px) skew(4deg) rotate(-1.2deg); }
-  75% { transform: translate(-7px, -9px) skew(-4deg) scale(0.98); }
-  90% { transform: translate(12px, 4px) skew(2deg) rotate(0.6deg); }
-  100% { transform: translate(0, 0) skew(0deg); }
-}
-
-@keyframes form-rgb-chromatic {
-  0% {
-    filter: drop-shadow(8px 0 0 rgba(255, 0, 80, 0.95)) 
-            drop-shadow(-8px 0 0 rgba(0, 240, 255, 0.95));
-  }
-  25% {
-    filter: drop-shadow(-12px 4px 0 rgba(255, 0, 80, 1)) 
-            drop-shadow(12px -4px 0 rgba(0, 240, 255, 1)) 
-            contrast(1.4);
-  }
-  50% {
-    filter: drop-shadow(15px -6px 0 rgba(255, 0, 80, 1)) 
-            drop-shadow(-15px 6px 0 rgba(0, 240, 255, 1)) 
-            invert(0.2);
-  }
-  75% {
-    filter: drop-shadow(-10px -5px 0 rgba(255, 0, 80, 1)) 
-            drop-shadow(10px 5px 0 rgba(0, 240, 255, 1)) 
-            hue-rotate(120deg);
-  }
-  100% {
-    filter: drop-shadow(8px 0 0 rgba(255, 0, 80, 0.95)) 
-            drop-shadow(-8px 0 0 rgba(0, 240, 255, 0.95));
-  }
-}
-
-@keyframes violent-bg-strobe {
-  0%, 75%, 100% { background-color: #f0ebf8; }
-  80% { background-color: #0d021a; }
-  88% { background-color: #ff0055; }
-  94% { background-color: #000000; }
-}
-
-body.form-glitching .form-card {
-  animation: card-flicker-tear 0.15s infinite;
-  box-shadow: 0 0 25px rgba(255, 0, 85, 0.5), 0 0 15px rgba(0, 229, 255, 0.5) !important;
-}
-
-@keyframes card-flicker-tear {
-  0% { transform: translateX(0); border-color: #dadce0; }
-  25% { transform: translateX(-6px) skewX(-2deg); border-color: #ff0055; }
-  50% { transform: translateX(7px) skewX(2.5deg); border-color: #00e5ff; }
-  75% { transform: translateX(-5px); border-color: #000000; }
-  100% { transform: translateX(0); border-color: #dadce0; }
-}
-
-body.form-glitching .form-title,
-body.form-glitching .question-text {
-  animation: text-jitter 0.08s infinite;
-}
-
-@keyframes text-jitter {
-  0% { transform: skew(0deg); text-shadow: 3px 0 #ff0055, -3px 0 #00e5ff; }
-  50% { transform: skew(2deg) scaleX(1.03); text-shadow: -4px 0 #ff0055, 4px 0 #00e5ff; color: #ff0055; }
-  100% { transform: skew(-1.5deg); text-shadow: 2px 0 #ff0055, -2px 0 #00e5ff; color: #202124; }
-}
-
-body.form-glitching .header-accent-bar {
-  animation: corrupt-banner 0.08s infinite;
-}
-
-body.form-glitching .btn-submit {
-  background-color: #ff0033 !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 35px #ff0033, 0 0 60px rgba(255, 0, 51, 0.9) !important;
-  animation: button-glitch-jitter 0.08s infinite;
+/* Primary Title: SUBMISSION RECEIVED with chromatic RGB separation */
+.glitch-title {
+  font-family: 'Courier New', Courier, monospace, 'Roboto', sans-serif;
+  font-size: clamp(28px, 6vw, 54px);
+  font-weight: 900;
   letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #ffffff;
+  position: relative;
+  margin: 0 0 10px;
+  line-height: 1.1;
+  text-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
+  animation: title-skew 1s infinite alternate;
 }
 
-@keyframes button-glitch-jitter {
+.glitch-title::before,
+.glitch-title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.glitch-title::before {
+  left: 4px;
+  text-shadow: -3px 0 #ff0055;
+  clip-path: inset(25% 0 35% 0);
+  animation: rgb-split-1 0.8s infinite linear alternate-reverse;
+}
+
+.glitch-title::after {
+  left: -4px;
+  text-shadow: 3px 0 #00e5ff;
+  clip-path: inset(60% 0 15% 0);
+  animation: rgb-split-2 1.1s infinite linear alternate-reverse;
+}
+
+@keyframes title-skew {
   0% { transform: skewX(0); }
-  25% { transform: skewX(-7deg) scale(1.08); }
-  50% { transform: skewX(7deg); }
-  75% { transform: skewX(-4deg) scale(0.96); }
+  20% { transform: skewX(-3deg) rotate(-0.5deg); }
+  40% { transform: skewX(2deg); }
+  60% { transform: skewX(-1.5deg); }
+  80% { transform: skewX(3deg) rotate(0.4deg); }
   100% { transform: skewX(0); }
 }
 
-body.form-glitching .btn-clear {
-  color: #ff0055 !important;
-  opacity: 0.4;
+@keyframes rgb-split-1 {
+  0% { clip-path: inset(10% 0 60% 0); transform: translate(-3px, 2px); }
+  35% { clip-path: inset(45% 0 20% 0); transform: translate(3px, -2px); }
+  70% { clip-path: inset(80% 0 5% 0); transform: translate(-4px, 1px); }
+  100% { clip-path: inset(20% 0 50% 0); transform: translate(2px, -1px); }
 }
 
-body.form-glitching .gforms-radio {
-  animation: radio-jitter 0.12s infinite;
-  border-color: #ff0055 !important;
+@keyframes rgb-split-2 {
+  0% { clip-path: inset(70% 0 10% 0); transform: translate(3px, -2px); }
+  35% { clip-path: inset(20% 0 50% 0); transform: translate(-3px, 2px); }
+  70% { clip-path: inset(5% 0 75% 0); transform: translate(4px, -1px); }
+  100% { clip-path: inset(50% 0 30% 0); transform: translate(-2px, 1px); }
 }
 
-body.form-glitching .gforms-radio:checked::after {
-  background-color: #ff0055 !important;
+/* Secondary Transmission Subtitle */
+.glitch-subtitle {
+  font-family: 'Courier New', monospace;
+  font-size: clamp(12px, 3vw, 16px);
+  color: #00ffcc;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin: 0 0 20px;
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
 }
 
-@keyframes radio-jitter {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.25) rotate(20deg); }
-  100% { transform: scale(0.85) rotate(-20deg); }
+/* Animated Equalizer Waveform */
+.glitch-equalizer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  height: 56px;
+  margin: 10px 0 24px;
+}
+
+.eq-bar {
+  width: clamp(5px, 1.2vw, 8px);
+  height: var(--h, 30px);
+  background: linear-gradient(180deg, #ff0055, #00ffcc);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(0, 255, 204, 0.6);
+  animation: eq-jitter 0.6s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+  transform-origin: bottom;
+}
+
+@keyframes eq-jitter {
+  0% { transform: scaleY(0.25); opacity: 0.6; }
+  50% { transform: scaleY(1.1); opacity: 1; }
+  100% { transform: scaleY(0.4); opacity: 0.8; }
+}
+
+/* Status Indicators Row */
+.glitch-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.status-indicator-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #e2e8f0;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #eab308;
+  box-shadow: 0 0 8px #eab308;
+  display: inline-block;
+}
+
+.status-dot.active {
+  background-color: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+}
+
+.status-dot.warning {
+  background-color: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+  animation: dot-pulse 0.8s infinite;
+}
+
+.status-dot.neutral {
+  background-color: #64748b;
+  box-shadow: none;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Touch-friendly Large Fallback Play Button */
+.glitch-audio-btn {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  font-family: 'Roboto', sans-serif;
+  font-size: clamp(15px, 3.5vw, 18px);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 12px 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.8);
+  margin: 12px 0 20px;
+  touch-action: manipulation;
+  min-height: 48px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.glitch-audio-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 35px rgba(239, 68, 68, 1);
+}
+
+.glitch-audio-btn:active {
+  transform: scale(0.98);
+}
+
+/* Terminal Log Lines */
+.glitch-terminal-log {
+  font-family: 'Courier New', monospace;
+  font-size: clamp(10px, 2.4vw, 12px);
+  color: #94a3b8;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+.terminal-line {
+  margin: 2px 0;
+}
+
+.terminal-sub {
+  color: #64748b;
+  font-size: 11px;
+  margin-top: 8px;
 }

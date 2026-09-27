@@ -1,75 +1,144 @@
 /**
- * Academic Survey Application & In-Place Google Form Glitch Engine
+ * Academic Survey Application & Full-Screen Glitch Submission Engine
  * "A Study of Vendors' Opinions About Their Selling Strategies in Wickely Bazar"
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // DOM Elements
   const surveyForm = document.getElementById('surveyForm');
+  const surveyContainer = document.getElementById('surveyContainer');
+  const topBanner = document.getElementById('topBanner');
+  const glitchScreen = document.getElementById('glitchScreen');
   const submitBtn = document.getElementById('submitBtn');
   const clearBtn = document.getElementById('clearBtn');
   const unansweredCountEl = document.getElementById('unansweredCount');
   const questionCards = document.querySelectorAll('.question-card');
-  const mainFormTitle = document.getElementById('mainFormTitle');
-  const audioAlertBanner = document.getElementById('audioAlertBanner');
-  const retryAudioBtn = document.getElementById('retryAudioBtn');
 
-  // =========================================================================
-  // PRE-WARMED PERSISTENT AUDIO ELEMENT
-  // Exactly ONE audio instance created/referenced once on page load
-  // Starts loading immediately to minimize startup delay
-  // =========================================================================
+  // Status & Audio Fallback Elements on Glitch Screen
+  const audioStatusText = document.getElementById('audioStatusText');
+  const audioStatusDot = document.getElementById('audioStatusDot');
+  const fsStatusText = document.getElementById('fsStatusText');
+  const fsStatusDot = document.getElementById('fsStatusDot');
+  const glitchPlayAudioBtn = document.getElementById('glitchPlayAudioBtn');
+
+  // Exact persistent single HTML5 audio element
   const audio = document.getElementById('voice');
 
+  let isSubmitted = false;
+
+  // =========================================================================
+  // AUDIO PRELOAD & INITIALIZATION
+  // Preloads the audio on page load to minimize startup latency
+  // =========================================================================
   if (audio) {
     try {
       audio.preload = 'auto';
       audio.loop = true;
       audio.volume = 1.0;
+      audio.playsInline = true;
       audio.muted = false;
-      // Immediately start loading and decoding the audio file
       audio.load();
-    } catch (e) {
-      console.log('Audio init notice:', e);
+    } catch (err) {
+      console.warn('Initial audio preload error:', err);
     }
 
-    // Gracefully handle playback state and errors
-    audio.addEventListener('error', () => {
-      if (isFormGlitched && audioAlertBanner) {
-        audioAlertBanner.style.display = 'flex';
-      }
-    });
-
+    // Monitor playback state
     audio.addEventListener('playing', () => {
-      if (audioAlertBanner) {
-        audioAlertBanner.style.display = 'none';
+      updateAudioStatus(true);
+    });
+
+    audio.addEventListener('pause', () => {
+      if (isSubmitted) {
+        // Enforce continuous loop if paused unexpectedly
+        audio.play().catch(() => {});
       }
     });
 
-    // Ensure seamless, continuous loop upon track completion
     audio.addEventListener('ended', () => {
-      if (isFormGlitched) {
+      if (isSubmitted) {
         audio.currentTime = 0;
         audio.play().catch(() => {});
       }
     });
   }
 
-  let isFormGlitched = false;
-  let lockedScrollTop = 0;
+  // =========================================================================
+  // STATUS INDICATOR HELPERS
+  // =========================================================================
+  function updateAudioStatus(isPlaying) {
+    if (!audioStatusText || !audioStatusDot) return;
+    if (isPlaying) {
+      audioStatusText.textContent = 'AUDIO ACTIVE // LOOPING';
+      audioStatusDot.className = 'status-dot active';
+      if (glitchPlayAudioBtn) glitchPlayAudioBtn.style.display = 'none';
+    } else {
+      audioStatusText.textContent = 'AUDIO BLOCKED // TAP PLAY';
+      audioStatusDot.className = 'status-dot warning';
+      if (glitchPlayAudioBtn) glitchPlayAudioBtn.style.display = 'inline-block';
+    }
+  }
 
-  // Active question card highlight
+  function updateFullscreenStatus(isFs) {
+    if (!fsStatusText || !fsStatusDot) return;
+    if (isFs) {
+      fsStatusText.textContent = 'FULLSCREEN ACTIVE';
+      fsStatusDot.className = 'status-dot active';
+    } else {
+      fsStatusText.textContent = 'WINDOWED MODE';
+      fsStatusDot.className = 'status-dot neutral';
+    }
+  }
+
+  // Track Fullscreen changes across browsers
+  document.addEventListener('fullscreenchange', () => {
+    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    updateFullscreenStatus(isFs);
+  });
+  document.addEventListener('webkitfullscreenchange', () => {
+    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    updateFullscreenStatus(isFs);
+  });
+
+  // =========================================================================
+  // FALLBACK PLAY AUDIO BUTTON (Touch-friendly manual start if blocked)
+  // =========================================================================
+  if (glitchPlayAudioBtn) {
+    glitchPlayAudioBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (audio) {
+        try {
+          audio.volume = 1.0;
+          audio.loop = true;
+          audio.muted = false;
+          audio.play().then(() => {
+            updateAudioStatus(true);
+          }).catch((err) => {
+            console.error('Manual audio play failed:', err);
+            updateAudioStatus(false);
+          });
+        } catch (err) {
+          console.error('Manual audio play exception:', err);
+          updateAudioStatus(false);
+        }
+      }
+    });
+  }
+
+  // =========================================================================
+  // QUESTION CARDS INTERACTION
+  // =========================================================================
   questionCards.forEach((card) => {
     card.addEventListener('click', () => {
-      if (isFormGlitched) return;
+      if (isSubmitted) return;
       questionCards.forEach((c) => c.classList.remove('active'));
       card.classList.add('active');
     });
   });
 
-  // Radio button changes & "Other" specification text display
+  // Radio button change listener & "Other" specification input handler
   document.querySelectorAll('.gforms-radio').forEach((radio) => {
     radio.addEventListener('change', (e) => {
-      if (isFormGlitched) return;
+      if (isSubmitted) return;
 
       const card = e.target.closest('.question-card');
       if (card) {
@@ -108,28 +177,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Corrupt text characters for in-place glitch realism
-  const originalTitle = mainFormTitle ? mainFormTitle.textContent : '';
-  const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?/0123456789~`§±';
-  function scrambleText(text, intensity = 0.35) {
-    return text.split('').map(ch => {
-      if (ch === ' ') return ' ';
-      return Math.random() < intensity ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : ch;
-    }).join('');
-  }
-
-  /**
-   * Submit Handler
-   */
-  surveyForm.addEventListener('submit', (e) => {
+  // =========================================================================
+  // ROBUST SUBMISSION FLOW
+  // 1. Prevent Default
+  // 2. Validate questions
+  // 3. Attempt audio.play() directly from the click gesture
+  // 4. Attempt fullscreen where supported
+  // 5. Hide original survey completely
+  // 6. Show full-screen glitch screen
+  // 7. Update audio status based on actual playback
+  // =========================================================================
+  surveyForm.addEventListener('submit', async (e) => {
+    // 1. Prevent default
     e.preventDefault();
 
-    if (isFormGlitched) return;
+    if (isSubmitted) return;
 
+    // 2. Validate all 10 required questions
     let firstMissingCard = null;
     let missingCount = 0;
 
-    // Validate all 10 questions
     for (let i = 1; i <= 10; i++) {
       const checkedOption = document.querySelector(`input[name="q${i}"]:checked`);
       const card = document.querySelector(`.question-card[data-q="${i}"]`);
@@ -147,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // If validation fails, scroll to first error
     if (firstMissingCard) {
       submitBtn.dataset.attempted = 'true';
       updateRemainingCount();
@@ -157,144 +223,79 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // =========================================================================
-    // SUBMIT AUDIO TIMING:
-    // Call audio.play() immediately inside that user interaction before showing glitch screen.
-    // No setTimeout, no artificial delays, no fetching/recreating audio.
-    // After play() succeeds, show the glitch screen.
-    // If playback is blocked, show fallback "PLAY AUDIO" button.
-    // =========================================================================
-    function activateGlitchScreen() {
-      if (isFormGlitched) return;
-      isFormGlitched = true;
-      lockedScrollTop = window.scrollY || document.documentElement.scrollTop;
+    // Mark submitted & disable submit button temporarily
+    isSubmitted = true;
+    submitBtn.disabled = true;
 
-      // Lock screen and prevent scrolling
-      document.documentElement.classList.add('screen-locked');
-      document.body.classList.add('screen-locked', 'form-glitching');
-
-      // Disable all form controls and buttons
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'S̶U̶B̶M̶I̶T̶';
-      clearBtn.disabled = true;
-
-      document.querySelectorAll('button:not(#retryAudioBtn), input, label, a, select').forEach((el) => {
-        el.style.pointerEvents = 'none';
-        el.style.cursor = 'not-allowed';
-        if ('disabled' in el) el.disabled = true;
-      });
-
-      // Scramble text in real time on the form
-      setInterval(() => {
-        if (mainFormTitle) {
-          mainFormTitle.textContent = scrambleText(originalTitle, 0.4);
-        }
-        const randomQ = document.querySelector(`.question-card[data-q="${Math.floor(Math.random() * 10) + 1}"] .question-text`);
-        if (randomQ) {
-          randomQ.style.color = Math.random() > 0.5 ? '#ff0055' : '#00e5ff';
-        }
-      }, 120);
-
-      // Keep volume at max and enforce looping without restarting audio
-      setInterval(() => {
-        if (audio && isFormGlitched) {
-          try {
-            if (audio.volume < 1.0) audio.volume = 1.0;
-            if (audio.muted) audio.muted = false;
-            if (audio.paused && (!audioAlertBanner || audioAlertBanner.style.display !== 'flex')) {
-              audio.play().catch(() => {});
-            }
-          } catch (e) {}
-        }
-      }, 200);
-    }
-
+    // 3. Immediately attempt audio playback from click gesture
+    let audioPromise = null;
     if (audio) {
       try {
         audio.volume = 1.0;
         audio.loop = true;
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              activateGlitchScreen();
-              if (audioAlertBanner) audioAlertBanner.style.display = 'none';
-            })
-            .catch((err) => {
-              console.log('Autoplay restriction caught:', err);
-              if (audioAlertBanner) audioAlertBanner.style.display = 'flex';
-              activateGlitchScreen();
-            });
-        } else {
-          activateGlitchScreen();
-        }
-      } catch (err) {
-        console.log('Audio play error:', err);
-        if (audioAlertBanner) audioAlertBanner.style.display = 'flex';
-        activateGlitchScreen();
+        audio.muted = false;
+        audioPromise = audio.play();
+      } catch (audioErr) {
+        console.warn('Initial audio.play() call error:', audioErr);
       }
+    }
+
+    // 4. Immediately request browser fullscreen where supported (non-blocking)
+    try {
+      if (document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen().catch((fsErr) => {
+          console.warn('Fullscreen request rejected:', fsErr);
+        });
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen();
+      }
+    } catch (fsApiErr) {
+      console.warn('Fullscreen API exception:', fsApiErr);
+    }
+    const isNowFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    updateFullscreenStatus(isNowFullscreen);
+
+    // 5. Completely hide original survey
+    if (surveyContainer) {
+      surveyContainer.style.display = 'none';
+    }
+    if (topBanner) {
+      topBanner.style.display = 'none';
+    }
+
+    // 6. Show the full-screen glitch screen
+    if (glitchScreen) {
+      glitchScreen.style.display = 'flex';
+    }
+
+    // 7. Handle audio playback result
+    if (audioPromise !== null && typeof audioPromise.then === 'function') {
+      audioPromise.then(() => {
+        updateAudioStatus(true);
+      }).catch((playErr) => {
+        console.warn('Browser blocked audio autoplay:', playErr);
+        updateAudioStatus(false);
+      });
+    } else if (audio && !audio.paused) {
+      updateAudioStatus(true);
     } else {
-      activateGlitchScreen();
+      updateAudioStatus(false);
     }
-  });
 
-  // Manual Retry Button if browser autoplay was blocked
-  if (retryAudioBtn) {
-    retryAudioBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (audio) {
-        audio.volume = 1.0;
-        audio.loop = true;
-        audio.play().then(() => {
-          if (audioAlertBanner) audioAlertBanner.style.display = 'none';
-        }).catch((err) => console.log('Manual play attempt:', err));
-      }
-    });
-  }
-
-  // =========================================================================
-  // ABSOLUTE SCREEN FREEZE: BLOCK ALL CLICKS, KEYS, AND SCROLLING AFTER SUBMIT
-  // "no screen work after click and scroll on submeet"
-  // "ek bhi website button kaam nahi karegi"
-  // =========================================================================
-  const blockAllEvents = (e) => {
-    if (isFormGlitched) {
-      if (e.target && (e.target.id === 'retryAudioBtn' || e.target.closest('#audioAlertBanner'))) {
-        return;
-      }
-      e.preventDefault();
-      e.stopPropagation();
-      if (audio) {
+    // Periodic volume & loop check
+    setInterval(() => {
+      if (audio && isSubmitted && !audio.paused) {
         try {
-          audio.volume = 1.0;
-          audio.muted = false;
-          if (audio.paused) audio.play().catch(() => {});
-        } catch (err) {}
+          if (audio.volume < 1.0) audio.volume = 1.0;
+          if (audio.muted) audio.muted = false;
+        } catch (e) {}
       }
-      return false;
-    }
-  };
-
-  window.addEventListener('click', blockAllEvents, true);
-  window.addEventListener('mousedown', blockAllEvents, true);
-  window.addEventListener('mouseup', blockAllEvents, true);
-  window.addEventListener('touchstart', blockAllEvents, { passive: false, capture: true });
-  window.addEventListener('touchend', blockAllEvents, { passive: false, capture: true });
-  window.addEventListener('touchmove', blockAllEvents, { passive: false, capture: true });
-  window.addEventListener('wheel', blockAllEvents, { passive: false, capture: true });
-  window.addEventListener('keydown', blockAllEvents, true);
-  window.addEventListener('contextmenu', blockAllEvents, true);
-
-  // Lock scroll position completely
-  window.addEventListener('scroll', () => {
-    if (isFormGlitched) {
-      window.scrollTo(0, lockedScrollTop);
-    }
-  }, { passive: false });
+    }, 500);
+  });
 
   // Clear Form button (before submit)
   clearBtn.addEventListener('click', () => {
-    if (isFormGlitched) return;
+    if (isSubmitted) return;
     if (confirm('Clear all answers? This will reset all your answers.')) {
       surveyForm.reset();
       document.querySelectorAll('.other-text-input').forEach((input) => {
