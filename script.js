@@ -1,9 +1,9 @@
 /**
- * Academic Survey Application & Full-Screen Glitch Submission Engine
+ * Academic Survey Application & Permanent In-Place Form Glitch Engine
  * "A Study of Vendors' Opinions About Their Selling Strategies in Wickely Bazar"
  */
 
-function initSurvey() {
+function setupSurveyGlitch() {
   const form = document.getElementById("surveyForm");
 
   if (!form) {
@@ -15,22 +15,12 @@ function initSurvey() {
   const clearBtn = document.getElementById("clearBtn");
   const unansweredCountEl = document.getElementById("unansweredCount");
   const questionCards = document.querySelectorAll(".question-card");
-  const surveyContainer = document.getElementById("surveyContainer");
-  const topBanner = document.getElementById("topBanner");
   const inPlaceGlitchFx = document.getElementById("inPlaceGlitchFx");
-  const glitchScreen = document.getElementById("glitchScreen");
   const mainFormTitle = document.getElementById("mainFormTitle");
-
-  // Glitch Screen & Indicator Elements
-  const audioStatusText = document.getElementById("audioStatusText");
-  const audioStatusDot = document.getElementById("audioStatusDot");
-  const fsStatusText = document.getElementById("fsStatusText");
-  const fsStatusDot = document.getElementById("fsStatusDot");
-  const glitchPlayAudioBtn = document.getElementById("glitchPlayAudioBtn");
 
   let isSubmitted = false;
 
-  // Pre-cached original title for text scrambling
+  // Cached original title for continuous live glitch scrambling
   const originalTitle = mainFormTitle ? mainFormTitle.textContent : "";
   const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?/0123456789~`§±';
   function scrambleText(text, intensity = 0.35) {
@@ -40,7 +30,7 @@ function initSurvey() {
     }).join('');
   }
 
-  // Persistent audio setup
+  // Persistent HTML5 Audio with Cloudinary stream
   const audio = document.getElementById("voice");
   if (audio) {
     try {
@@ -54,15 +44,12 @@ function initSurvey() {
       console.warn("Audio initial load warning:", err);
     }
 
+    // Keep audio looping indefinitely once started
     audio.addEventListener("ended", () => {
       if (isSubmitted) {
         audio.currentTime = 0;
         audio.play().catch(() => {});
       }
-    });
-
-    audio.addEventListener("playing", () => {
-      updateAudioStatus(true);
     });
 
     audio.addEventListener("pause", () => {
@@ -72,55 +59,7 @@ function initSurvey() {
     });
   }
 
-  function updateAudioStatus(isPlaying) {
-    if (!audioStatusText || !audioStatusDot) return;
-    if (isPlaying) {
-      audioStatusText.textContent = "AUDIO ACTIVE // LOOPING";
-      audioStatusDot.className = "status-dot active";
-      if (glitchPlayAudioBtn) glitchPlayAudioBtn.style.display = "none";
-    } else {
-      audioStatusText.textContent = "AUDIO BLOCKED // TAP PLAY";
-      audioStatusDot.className = "status-dot warning";
-      if (glitchPlayAudioBtn) glitchPlayAudioBtn.style.display = "inline-block";
-    }
-  }
-
-  function updateFullscreenStatus(isFs) {
-    if (!fsStatusText || !fsStatusDot) return;
-    if (isFs) {
-      fsStatusText.textContent = "FULLSCREEN ACTIVE";
-      fsStatusDot.className = "status-dot active";
-    } else {
-      fsStatusText.textContent = "WINDOWED MODE";
-      fsStatusDot.className = "status-dot neutral";
-    }
-  }
-
-  document.addEventListener("fullscreenchange", () => {
-    updateFullscreenStatus(!!(document.fullscreenElement || document.webkitFullscreenElement));
-  });
-  document.addEventListener("webkitfullscreenchange", () => {
-    updateFullscreenStatus(!!(document.fullscreenElement || document.webkitFullscreenElement));
-  });
-
-  if (glitchPlayAudioBtn) {
-    glitchPlayAudioBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (audio) {
-        audio.volume = 1.0;
-        audio.loop = true;
-        audio.muted = false;
-        audio.play().then(() => {
-          updateAudioStatus(true);
-        }).catch((err) => {
-          console.warn("Manual audio play blocked:", err);
-          updateAudioStatus(false);
-        });
-      }
-    });
-  }
-
-  // Question cards selection
+  // Question cards selection behavior
   questionCards.forEach((card) => {
     card.addEventListener("click", () => {
       if (isSubmitted) return;
@@ -129,7 +68,7 @@ function initSurvey() {
     });
   });
 
-  // Radio button changes & "Other" input toggle
+  // Radio button change listeners & "Other" specification input handler
   document.querySelectorAll(".gforms-radio").forEach((radio) => {
     radio.addEventListener("change", (e) => {
       if (isSubmitted) return;
@@ -172,9 +111,11 @@ function initSurvey() {
   }
 
   // =========================================================================
-  // SUBMIT EVENT HANDLER: INTERCEPTS NATIVE SUBMISSION — NO PAGE RELOAD
+  // SUBMIT EVENT HANDLER: INTERCEPTS NATIVE SUBMISSION — ZERO PAGE RELOAD
+  // The actual survey form glitches indefinitely. NO second screen.
   // =========================================================================
   form.addEventListener("submit", function(event) {
+    // 1. Prevent native submission immediately
     event.preventDefault();
     event.stopPropagation();
 
@@ -182,7 +123,7 @@ function initSurvey() {
 
     if (isSubmitted) return;
 
-    // Validate questions
+    // 2. Validate all 10 required questions
     let firstMissingCard = null;
     let missingCount = 0;
 
@@ -203,6 +144,7 @@ function initSurvey() {
       }
     }
 
+    // If validation fails, scroll to first unanswered card without reload
     if (firstMissingCard) {
       if (submitBtn) submitBtn.dataset.attempted = "true";
       updateRemainingCount();
@@ -212,10 +154,11 @@ function initSurvey() {
       return;
     }
 
-    // Mark as submitted
+    // Form is 100% valid: activate permanent form glitch
     isSubmitted = true;
 
-    document.querySelectorAll("input, button:not(#glitchPlayAudioBtn)").forEach(el => {
+    // Lock inputs so user cannot disrupt the glitch state
+    document.querySelectorAll("input, button").forEach(el => {
       el.style.pointerEvents = "none";
     });
 
@@ -223,25 +166,20 @@ function initSurvey() {
       submitBtn.textContent = "S̶U̶B̶M̶I̶T̶";
     }
 
-    // 1. Audio attempt
+    // 3. Audio attempt (safely wrapped, failure never breaks anything)
     if (audio) {
       try {
         audio.volume = 1.0;
         audio.loop = true;
-        audio.play().then(() => {
-          console.log("AUDIO PLAYING");
-          updateAudioStatus(true);
-        }).catch((err) => {
-          console.warn("Audio playback blocked:", err);
-          updateAudioStatus(false);
+        audio.play().catch((err) => {
+          console.warn("Audio autoplay blocked by browser:", err);
         });
-      } catch (error) {
-        console.warn("Audio exception:", error);
-        updateAudioStatus(false);
+      } catch (err) {
+        console.warn("Audio play exception:", err);
       }
     }
 
-    // 2. Fullscreen attempt
+    // 4. Optional Fullscreen attempt (safely wrapped, never changes screens or reloads)
     try {
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen().catch(() => {});
@@ -249,17 +187,18 @@ function initSurvey() {
         document.documentElement.webkitRequestFullscreen();
       }
     } catch (fsErr) {
-      console.warn("Fullscreen unavailable:", fsErr);
+      console.warn("Fullscreen request error:", fsErr);
     }
-    updateFullscreenStatus(!!(document.fullscreenElement || document.webkitFullscreenElement));
 
-    // 3. Form glitches in-place
+    // 5. START CONTINUOUS IN-PLACE FORM GLITCHING
+    // The actual survey form remains on screen and continues glitching forever!
     document.body.classList.add("form-glitching");
     if (inPlaceGlitchFx) {
       inPlaceGlitchFx.style.display = "block";
     }
 
-    const scrambleInterval = setInterval(() => {
+    // Rapid live text scrambler on title and question cards that loops infinitely
+    setInterval(() => {
       if (mainFormTitle && originalTitle) {
         mainFormTitle.textContent = scrambleText(originalTitle, 0.45);
       }
@@ -270,40 +209,14 @@ function initSurvey() {
           qText.style.color = Math.random() > 0.5 ? "#ff0055" : "#00e5ff";
         }
       }
-    }, 90);
+    }, 80);
 
-    // 4. Form breaks apart
-    setTimeout(() => {
-      document.body.classList.add("glitch-phase-break");
-    }, 1600);
-
-    // 5. Form disappears and full-screen glitch appears
-    setTimeout(() => {
-      clearInterval(scrambleInterval);
-
-      if (surveyContainer) {
-        surveyContainer.style.display = "none";
-      }
-      if (topBanner) {
-        topBanner.style.display = "none";
-      }
-      if (inPlaceGlitchFx) {
-        inPlaceGlitchFx.style.display = "none";
-      }
-
-      if (glitchScreen) {
-        glitchScreen.style.display = "flex";
-        glitchScreen.style.visibility = "visible";
-        glitchScreen.style.opacity = "1";
-      }
-
-      if (audio && !audio.paused) {
-        updateAudioStatus(true);
-      }
-    }, 2800);
+    // That is the entire experience. STOP HERE.
+    // No second screen. No timeout to another screen.
+    // The glitching form itself remains forever.
   });
 
-  // Clear Form button
+  // Clear Form button (before submit)
   if (clearBtn) {
     clearBtn.addEventListener("click", () => {
       if (isSubmitted) return;
@@ -325,7 +238,7 @@ function initSurvey() {
 
 // Attach listener via DOMContentLoaded
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initSurvey);
+  document.addEventListener("DOMContentLoaded", setupSurveyGlitch);
 } else {
-  initSurvey();
+  setupSurveyGlitch();
 }
