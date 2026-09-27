@@ -3,8 +3,14 @@
  * "A Study of Vendors' Opinions About Their Selling Strategies in Wickely Bazar"
  */
 
-function setupSurveyApp() {
-  const form = document.querySelector("form");
+function initSurvey() {
+  const form = document.getElementById("surveyForm");
+
+  if (!form) {
+    console.error("ERROR: surveyForm does not exist");
+    return;
+  }
+
   const submitBtn = document.getElementById("submitBtn");
   const clearBtn = document.getElementById("clearBtn");
   const unansweredCountEl = document.getElementById("unansweredCount");
@@ -22,11 +28,6 @@ function setupSurveyApp() {
   const fsStatusDot = document.getElementById("fsStatusDot");
   const glitchPlayAudioBtn = document.getElementById("glitchPlayAudioBtn");
 
-  if (!form) {
-    console.error("FORM NOT FOUND");
-    return;
-  }
-
   let isSubmitted = false;
 
   // Pre-cached original title for text scrambling
@@ -39,10 +40,7 @@ function setupSurveyApp() {
     }).join('');
   }
 
-  // =========================================================================
-  // PERSISTENT AUDIO ELEMENT SETUP (Cloudinary URL)
-  // Preloads the audio on initial page load
-  // =========================================================================
+  // Persistent audio setup
   const audio = document.getElementById("voice");
   if (audio) {
     try {
@@ -56,7 +54,6 @@ function setupSurveyApp() {
       console.warn("Audio initial load warning:", err);
     }
 
-    // Keep continuously looping once submitted
     audio.addEventListener("ended", () => {
       if (isSubmitted) {
         audio.currentTime = 0;
@@ -75,9 +72,6 @@ function setupSurveyApp() {
     });
   }
 
-  // =========================================================================
-  // STATUS INDICATOR HELPERS
-  // =========================================================================
   function updateAudioStatus(isPlaying) {
     if (!audioStatusText || !audioStatusDot) return;
     if (isPlaying) {
@@ -109,7 +103,6 @@ function setupSurveyApp() {
     updateFullscreenStatus(!!(document.fullscreenElement || document.webkitFullscreenElement));
   });
 
-  // Fallback Play Audio Button (Touch-friendly for mobile/autoplay block)
   if (glitchPlayAudioBtn) {
     glitchPlayAudioBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -127,7 +120,7 @@ function setupSurveyApp() {
     });
   }
 
-  // Question cards active state
+  // Question cards selection
   questionCards.forEach((card) => {
     card.addEventListener("click", () => {
       if (isSubmitted) return;
@@ -136,7 +129,7 @@ function setupSurveyApp() {
     });
   });
 
-  // Radio button changes & "Other" specification input handler
+  // Radio button changes & "Other" input toggle
   document.querySelectorAll(".gforms-radio").forEach((radio) => {
     radio.addEventListener("change", (e) => {
       if (isSubmitted) return;
@@ -179,18 +172,17 @@ function setupSurveyApp() {
   }
 
   // =========================================================================
-  // AUTHORITATIVE FORM SUBMISSION & PROGRESSIVE GLITCH SEQUENCE
+  // SUBMIT EVENT HANDLER: INTERCEPTS NATIVE SUBMISSION — NO PAGE RELOAD
   // =========================================================================
-  form.addEventListener("submit", async (event) => {
-    // Prevent any native form submission or page refresh
+  form.addEventListener("submit", function(event) {
     event.preventDefault();
-    event.stopImmediatePropagation();
+    event.stopPropagation();
 
-    console.log("FORM SUBMIT HANDLER FIRED");
+    console.log("SUCCESS: submit event intercepted — NO PAGE RELOAD");
 
     if (isSubmitted) return;
 
-    // Validate all 10 questions
+    // Validate questions
     let firstMissingCard = null;
     let missingCount = 0;
 
@@ -223,7 +215,6 @@ function setupSurveyApp() {
     // Mark as submitted
     isSubmitted = true;
 
-    // Disable all inputs to prevent further user input
     document.querySelectorAll("input, button:not(#glitchPlayAudioBtn)").forEach(el => {
       el.style.pointerEvents = "none";
     });
@@ -232,7 +223,7 @@ function setupSurveyApp() {
       submitBtn.textContent = "S̶U̶B̶M̶I̶T̶";
     }
 
-    // 1. Audio attempt directly inside user interaction
+    // 1. Audio attempt
     if (audio) {
       try {
         audio.volume = 1.0;
@@ -250,10 +241,10 @@ function setupSurveyApp() {
       }
     }
 
-    // 2. Fullscreen attempt (non-blocking)
+    // 2. Fullscreen attempt
     try {
       if (document.documentElement.requestFullscreen) {
-        await document.documentElement.requestFullscreen().catch(() => {});
+        document.documentElement.requestFullscreen().catch(() => {});
       } else if (document.documentElement.webkitRequestFullscreen) {
         document.documentElement.webkitRequestFullscreen();
       }
@@ -262,16 +253,12 @@ function setupSurveyApp() {
     }
     updateFullscreenStatus(!!(document.fullscreenElement || document.webkitFullscreenElement));
 
-    // =========================================================================
-    // STEP 1 & 2 & 3: FORM GLITCHES IN-PLACE
-    // The actual survey form remains visible and starts glitching/corrupting!
-    // =========================================================================
+    // 3. Form glitches in-place
     document.body.classList.add("form-glitching");
     if (inPlaceGlitchFx) {
       inPlaceGlitchFx.style.display = "block";
     }
 
-    // Scramble text on form cards in real time
     const scrambleInterval = setInterval(() => {
       if (mainFormTitle && originalTitle) {
         mainFormTitle.textContent = scrambleText(originalTitle, 0.45);
@@ -285,17 +272,12 @@ function setupSurveyApp() {
       }
     }, 90);
 
-    // =========================================================================
-    // STEP 4 & 5: CORRUPTION INTENSIFIES & FORM BREAKS APART (~1600ms)
-    // The actual form visibly breaks apart into flying fragments
-    // =========================================================================
+    // 4. Form breaks apart
     setTimeout(() => {
       document.body.classList.add("glitch-phase-break");
     }, 1600);
 
-    // =========================================================================
-    // STEP 6 & 7: FORM DISAPPEARS & FULLSCREEN GLITCH SCREEN APPEARS (~2800ms)
-    // =========================================================================
+    // 5. Form disappears and full-screen glitch appears
     setTimeout(() => {
       clearInterval(scrambleInterval);
 
@@ -315,14 +297,13 @@ function setupSurveyApp() {
         glitchScreen.style.opacity = "1";
       }
 
-      // Check audio status again in case state settled
       if (audio && !audio.paused) {
         updateAudioStatus(true);
       }
     }, 2800);
   });
 
-  // Clear Form button (before submit)
+  // Clear Form button
   if (clearBtn) {
     clearBtn.addEventListener("click", () => {
       if (isSubmitted) return;
@@ -342,9 +323,9 @@ function setupSurveyApp() {
   }
 }
 
-// Ensure execution whether DOMContentLoaded hasn't fired yet or already has
+// Attach listener via DOMContentLoaded
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", setupSurveyApp);
+  document.addEventListener("DOMContentLoaded", initSurvey);
 } else {
-  setupSurveyApp();
+  initSurvey();
 }
