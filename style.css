@@ -563,7 +563,9 @@ body.form-glitching .btn-submit {
    "The form itself must remain the visible glitch screen."
    ========================================================================== */
 
-body.form-glitching #surveyContainer {
+body.form-glitching #surveyContainer,
+.permanent-glitch,
+.page-shell.permanent-glitch {
   /* Permanently visible, continuous aggressive glitching */
   animation: violent-form-shake 0.12s steps(2, end) infinite alternate,
              form-rgb-chromatic 0.15s infinite;

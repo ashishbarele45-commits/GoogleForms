@@ -133,45 +133,11 @@ export default function App() {
   const [activeQuestionId, setActiveQuestionId] = useState<number | null>(null);
   const [attemptedSubmit, setAttemptedSubmit] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [showGlitchScreen, setShowGlitchScreen] = useState<boolean>(false);
   const [audioBlocked, setAudioBlocked] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [showClearConfirm, setShowClearConfirm] = useState<boolean>(false);
-  const [glitchNoiseSeed, setGlitchNoiseSeed] = useState<number>(0);
 
   const questionRefs = useRef<Record<number, HTMLElement | null>>({});
-
-  // Periodic random flicker seed for digital glitch effect
-  useEffect(() => {
-    if (!showGlitchScreen) return;
-    const interval = setInterval(() => {
-      setGlitchNoiseSeed(Math.random());
-    }, 120);
-    return () => clearInterval(interval);
-  }, [showGlitchScreen]);
-
-  // Handle ESC key to exit glitch screen safely
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showGlitchScreen) {
-        exitGlitchMode();
-      }
-    };
-
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement && showGlitchScreen) {
-        // User exited native browser fullscreen via ESC or browser UI
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
-  }, [showGlitchScreen]);
 
   const handleSelectOption = (questionId: number, option: string) => {
     setAnswers(prev => ({
@@ -237,7 +203,7 @@ export default function App() {
     e.preventDefault();
 
     // 1. Prevent duplicate submission triggers
-    if (isSubmitting || showGlitchScreen) return;
+    if (isSubmitting) return;
 
     setAttemptedSubmit(true);
 
@@ -253,34 +219,20 @@ export default function App() {
       return;
     }
 
-    // All 10 questions are answered: proceed to submit & glitch mode
+    // All 10 questions are answered: activate in-place permanent form glitch
     setIsSubmitting(true);
 
     // Request browser fullscreen (standard user-gesture invocation)
     try {
       if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(() => {
-          // Gracefully continue even if user/browser rejects fullscreen
-        });
+        document.documentElement.requestFullscreen().catch(() => {});
       }
     } catch {
       // Ignore fullscreen errors
     }
 
-    // Activate the Glitch Screen visual effect
-    setShowGlitchScreen(true);
-
     // Play the exact supplied audio file
     playSuppliedAudio();
-  };
-
-  const exitGlitchMode = () => {
-    pauseSuppliedAudio();
-    if (document.fullscreenElement && document.exitFullscreen) {
-      document.exitFullscreen().catch(() => {});
-    }
-    setShowGlitchScreen(false);
-    setIsSubmitting(false);
   };
 
   const toggleMute = () => {
@@ -309,7 +261,7 @@ export default function App() {
   const unansweredCount = SURVEY_QUESTIONS.filter(q => !answers[q.id]).length;
 
   return (
-    <div className="min-h-screen bg-[#f0ebf8] py-4 sm:py-8 px-3 sm:px-4 flex flex-col items-center">
+    <div className={`page-shell min-h-screen bg-[#f0ebf8] py-4 sm:py-8 px-3 sm:px-4 flex flex-col items-center ${isSubmitting ? 'form-glitching permanent-glitch' : ''}`}>
       {/* Top Banner accent decoration (mimics Google Forms' top color band) */}
       <div className="fixed top-0 left-0 right-0 h-32 bg-[#673ab7] -z-10 shadow-sm" />
 
@@ -488,136 +440,7 @@ export default function App() {
           </div>
         </div>
       )}
-
-      {/* ========================================================================= */}
-      {/* FULLSCREEN GLITCH TRANSITION SCREEN (Triggered strictly on submit)         */}
-      {/* ========================================================================= */}
-      {showGlitchScreen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Submission Glitch Screen"
-          className="fixed inset-0 z-[9999] bg-[#050508] text-white flex flex-col items-center justify-center select-none overflow-hidden glitch-flicker"
-        >
-          {/* CRT Scanlines Overlay */}
-          <div className="absolute inset-0 crt-scanlines opacity-75 z-10 pointer-events-none" />
-
-          {/* Glitch noise and background distortion lines */}
-          <div
-            className="absolute inset-0 pointer-events-none opacity-20 z-0"
-            style={{
-              backgroundImage: `radial-gradient(circle at ${50 + Math.sin(glitchNoiseSeed * 10) * 20}% ${50 + Math.cos(glitchNoiseSeed * 10) * 20}%, #7928ca 0%, #ff0080 40%, transparent 70%)`,
-              filter: 'blur(40px)',
-            }}
-          />
-
-          {/* Random horizontal digital slice artifacts */}
-          <div
-            className="absolute left-0 right-0 h-1 bg-cyan-400 opacity-60 z-10 pointer-events-none"
-            style={{ top: `${(glitchNoiseSeed * 100) % 95}%` }}
-          />
-          <div
-            className="absolute left-0 right-0 h-0.5 bg-pink-500 opacity-60 z-10 pointer-events-none"
-            style={{ top: `${((glitchNoiseSeed + 0.37) * 100) % 90}%` }}
-          />
-
-          {/* Top Bar Controls: Audio Toggle & Exit Button (Strict Usability / Safety) */}
-          <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-30 flex items-center gap-3">
-            {/* Audio Mute/Unmute */}
-            <button
-              onClick={toggleMute}
-              title={isMuted ? "Unmute audio" : "Mute audio"}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-mono tracking-wider backdrop-blur-md transition-all cursor-pointer"
-            >
-              {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4 text-emerald-400 animate-pulse" />}
-              <span className="hidden sm:inline">{isMuted ? "MUTED" : "AUDIO ACTIVE"}</span>
-            </button>
-
-            {/* Exit Glitch Screen Button (Never traps user) */}
-            <button
-              onClick={exitGlitchMode}
-              title="Exit fullscreen / glitch screen (Press Esc)"
-              className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/80 hover:bg-red-600 text-white text-xs font-mono font-bold tracking-wider shadow-lg hover:shadow-red-500/50 backdrop-blur-md transition-all cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>EXIT [ESC]</span>
-            </button>
-          </div>
-
-          {/* Center Visual Glitch Content */}
-          <div className="relative z-20 text-center px-4 max-w-2xl w-full flex flex-col items-center">
-            {/* Digital Telemetry / Academic Study Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded border border-cyan-500/40 bg-cyan-950/40 text-cyan-300 font-mono text-[11px] sm:text-xs tracking-widest uppercase">
-              <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
-              <span>TRANSMISSION COMPLETE // 10/10 RESPONSES LOGGED</span>
-            </div>
-
-            {/* Large Glitch Headline: "SUBMISSION RECEIVED" */}
-            <h1
-              data-text="SUBMISSION RECEIVED"
-              className="glitch-text text-3xl sm:text-5xl md:text-6xl font-black mb-4 tracking-wider leading-none"
-            >
-              SUBMISSION RECEIVED
-            </h1>
-
-            {/* Sub-text with RGB chromatic displacement feel */}
-            <p className="font-mono text-xs sm:text-sm text-gray-300 tracking-widest uppercase mb-8 max-w-lg leading-relaxed">
-              [SYSTEM OK] Wickely Bazar Fieldwork telemetry processed. Continuous loop audio channel active.
-            </p>
-
-            {/* Audio Visualizer Wave / Bars */}
-            <div className="flex items-center justify-center gap-1.5 sm:gap-2 h-16 sm:h-20 my-4 px-6 py-2 rounded-lg bg-black/50 border border-white/10 backdrop-blur-sm">
-              {[45, 80, 25, 95, 60, 30, 85, 100, 40, 70, 90, 50, 65, 35, 75].map((height, i) => (
-                <div
-                  key={i}
-                  className="w-1.5 sm:w-2 bg-gradient-to-t from-purple-500 via-pink-500 to-cyan-400 rounded-t-sm"
-                  style={{
-                    height: isMuted ? '6px' : `${Math.max(12, (height * (0.4 + (glitchNoiseSeed * 0.6))) % 100)}%`,
-                    transition: 'height 0.1s ease',
-                  }}
-                />
-              ))}
-            </div>
-
-            {/* Autoplay fallback button if browser blocked audio */}
-            {audioBlocked && (
-              <div className="mt-4 p-4 rounded-lg bg-amber-950/80 border border-amber-500/50 text-amber-200 text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-between gap-3 max-w-md w-full animate-bounce">
-                <div className="flex items-center gap-2">
-                  <Volume2 className="w-5 h-5 text-amber-400" />
-                  <span>Browser blocked autoplay: click to start audio</span>
-                </div>
-                <button
-                  onClick={playSuppliedAudio}
-                  className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded text-xs uppercase tracking-wider cursor-pointer"
-                >
-                  Play Audio
-                </button>
-              </div>
-            )}
-
-            {/* Bottom Return / Reset Control */}
-            <div className="mt-8 flex flex-col sm:flex-row items-center gap-3">
-              <button
-                onClick={exitGlitchMode}
-                className="px-6 py-2.5 rounded bg-white/10 hover:bg-white/20 border border-white/30 text-white font-mono text-xs uppercase tracking-widest transition-all cursor-pointer"
-              >
-                Return to Survey Form
-              </button>
-
-              <button
-                onClick={() => {
-                  exitGlitchMode();
-                  handleClearForm();
-                }}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded text-gray-400 hover:text-white font-mono text-xs uppercase tracking-widest transition-all cursor-pointer"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                Submit another response
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+

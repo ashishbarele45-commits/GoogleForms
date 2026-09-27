@@ -193,6 +193,10 @@ function setupSurveyGlitch() {
     // 5. START CONTINUOUS IN-PLACE FORM GLITCHING
     // The actual survey form remains on screen and continues glitching forever!
     document.body.classList.add("form-glitching");
+    const pageShell = document.querySelector(".page-shell");
+    if (pageShell) {
+      pageShell.classList.add("permanent-glitch");
+    }
     if (inPlaceGlitchFx) {
       inPlaceGlitchFx.style.display = "block";
     }
